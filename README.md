@@ -1,7 +1,7 @@
-# CSLab: Implementacja `Time`, `TimePeriod`
+# C#-Lab: Implementacja `Time`, `TimePeriod`
 
 * Autor: Krzysztof Molenda
-* Wersja: 0.1 (2017-03-20)
+* Wersja: 0.2 (2020-11-08)
 * Zagadnienia: projektowanie typu danych, typ strukturalny (`struct`), implementacja interfejsów, przeciążanie operatorów, praca na wielu plikach, testowanie funkcjonalności, properties i auto-properties, zapewnianie niezmienniczości (_immutability_) zmiennych.
 
 _UWAGA_: Zadanie ma charakter ćwiczebny. W bibliotekach C# dostępne są gotowe struktury/klasy realizujące (prawdopodobnie lepiej) przedstawione założenia (`DateTime`, `DateTimeOfset`, `TimeSpan`). Jednak realizacja tego zadania pozwala lepiej zrozumieć ich działanie.
@@ -20,7 +20,7 @@ Zaprogramuj, korzystając z notatek do wykładów, **wzajemnie powiązane ze sob
 
 * zapewnij niezmienniczość (ang. _immutable_) tworzonych zmiennych typu `Time`,
   
-* dostarcz różne warianty konstrukcji (między innymi dla trzech parametrów: godzina, minuta sekunda; dla dwóch parametrów: godzina, minuta i sekundy domyślnie; dla jednego parametru godzina; dla parametru typu string o postaci `hh:mm:ss` i ewentualnie innych, wg uznania), zadbaj o poprawną konstrukcję zmiennych, zgłaszając odpowiedni wyjątek w sytuacji błędnych danych,
+* dostarcz różne warianty konstrukcji (między innymi dla trzech parametrów: godzina, minuta, sekunda; dla dwóch parametrów: godzina, minuta i sekundy domyślnie; dla jednego parametru godzina; dla parametru typu `string` o postaci `hh:mm:ss` i ewentualnie innych, wg uznania), zadbaj o poprawną konstrukcję zmiennych, zgłaszając odpowiedni wyjątek w sytuacji błędnych danych,
   
 * zaimplementuj standardową reprezentację tekstową czasu (w postaci: `hh:mm:ss`) – przeciąż metodę `ToString()`,
   
@@ -48,8 +48,8 @@ Zaprogramuj, korzystając z notatek do wykładów, **wzajemnie powiązane ze sob
 
 Przetestuj poprawność zaprojektowanych struktur tworząc odpowiednie testy jednostkowe.
 
-Wykorzystaj zaprogramowane struktury do realizacji programu typu „zegar” i „stoper”. Mile widziana aplikacja desktopowa (WinForm, WPF, UWP).
-
 ## Zadania dodatkowe
 
-1. Zmodyfikuj zaprogramowane struktury tak, aby możliwe było operowanie na milisekundach, czyli tysięcznych częściach sekundy. Taka realizacja może przydać się przy tworzeniu programu typu stoper, gdzie pożądana jest większa dokładność niż na poziomie 1 sekundy.
+1. Wykorzystaj zaprogramowane struktury do realizacji programu typu „zegar” i „stoper”. Mile widziana aplikacja desktopowa (WinForm, WPF, UWP).
+
+2. Zmodyfikuj zaprogramowane struktury tak, aby możliwe było operowanie na milisekundach, czyli tysięcznych częściach sekundy. Taka realizacja może przydać się przy tworzeniu programu typu stoper, gdzie pożądana jest większa dokładność niż na poziomie 1 sekundy.
