@@ -4,9 +4,9 @@ namespace TimeAndTimePeriod
 {
     public struct Time : IEquatable<Time>, IComparable<Time>
     {
-        private byte Hours { get; }
-        private byte Minutes { get; }
-        private byte Seconds { get; }
+        public byte Hours { get; }
+        public byte Minutes { get; }
+        public byte Seconds { get; }
 
         public Time(byte hours, byte minutes = 0, byte seconds = 0)
         {
@@ -42,17 +42,31 @@ namespace TimeAndTimePeriod
         public static bool operator <=(Time a, Time b) => a.CompareTo(b) <= 0;
         public static bool operator >(Time a, Time b) => a.CompareTo(b) > 0;
         public static bool operator >=(Time a, Time b) => a.CompareTo(b) >= 0;
-                    
+        public static Time operator +(Time a, TimePeriod b) => a.Plus(b);
 
-        /*Time Plus(TimePeriod timeperiod)
+
+        public Time Plus(TimePeriod timeperiod)
         {
+            var fullSeconds = Hours * 3600 + Minutes * 60 + Seconds + timeperiod.Seconds;
+
+            var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
+            var minutes = (byte) (fullSeconds / 60 % 60);
+            var seconds = (byte) (fullSeconds % 60);
             
+            return new Time(hours, minutes, seconds);
         }
 
-        static Time Plus(Time time, TimePeriod timeperiod)
+        public static Time Plus(Time time, TimePeriod timeperiod)
         {
+            var fullSeconds = ConvertTimeToSeconds(time) + timeperiod.Seconds;
             
-        }*/
-        
+            var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
+            var minutes = (byte) (fullSeconds / 60 % 60);
+            var seconds = (byte) (fullSeconds % 60);
+            
+            return new Time(hours, minutes, seconds);
+        }
+
+        private static long ConvertTimeToSeconds(Time time) => time.Hours * 3600 + time.Minutes * 60 + time.Seconds;
     }
 }
