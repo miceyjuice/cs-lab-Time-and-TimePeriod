@@ -4,35 +4,39 @@ namespace TimeAndTimePeriod
 {
     public struct Time : IEquatable<Time>, IComparable<Time>
     {
-        public byte Hours { get; }
-        public byte Minutes { get; }
-        public byte Seconds { get; }
+        private readonly byte _hours;
+        private readonly byte _minutes;
+        private readonly byte _seconds;
+
+        public byte Hours => _hours;
+        public byte Minutes => _minutes;
+        public byte Seconds => _seconds;
 
         public Time(byte hours, byte minutes = 0, byte seconds = 0)
         {
-            Hours = hours > 23 ? throw new ArgumentException("Wrong argument!") : hours;
-            Minutes = minutes > 59 ? throw new ArgumentException("Wrong argument!") : minutes;
-            Seconds = seconds > 59 ? throw new ArgumentException("Wrong argument!") : seconds;
+            _hours = hours > 23 ? throw new ArgumentException("Wrong argument!") : hours;
+            _minutes = minutes > 59 ? throw new ArgumentException("Wrong argument!") : minutes;
+            _seconds = seconds > 59 ? throw new ArgumentException("Wrong argument!") : seconds;
         }
 
         public Time(string time)
         {
             var times = time.Split(':');
 
-            Hours = Convert.ToByte(times[0]);
-            Minutes = Convert.ToByte(times[1]);
-            Seconds = Convert.ToByte(times[2]);
+            _hours = Convert.ToByte(times[0]);
+            _minutes = Convert.ToByte(times[1]);
+            _seconds = Convert.ToByte(times[2]);
         }
 
-        public override string ToString() => $"{Hours:00}:{Minutes:00}:{Seconds:00}";
+        public override string ToString() => $"{_hours:00}:{_minutes:00}:{_seconds:00}";
 
-        public bool Equals(Time other) => Hours == other.Hours && Minutes == other.Minutes && Seconds == other.Seconds;
+        public bool Equals(Time other) => _hours == other._hours && _minutes == other._minutes && _seconds == other._seconds;
 
         public int CompareTo(Time other)
         {
-            if (Hours - other.Hours != 0) return Hours - other.Hours;
-            if (Minutes - other.Minutes != 0) return Minutes - other.Minutes;
-            if (Seconds - other.Seconds != 0) return Seconds - other.Seconds;
+            if (_hours - other._hours != 0) return _hours - other._hours;
+            if (_minutes - other._minutes != 0) return _minutes - other._minutes;
+            if (_seconds - other._seconds != 0) return _seconds - other._seconds;
             return 0;
         }
 
@@ -47,26 +51,26 @@ namespace TimeAndTimePeriod
 
         public Time Plus(TimePeriod timeperiod)
         {
-            var fullSeconds = Hours * 3600 + Minutes * 60 + Seconds + timeperiod.Seconds;
+            var full_seconds = _hours * 3600 + _minutes * 60 + _seconds + timeperiod.Seconds;
 
-            var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
-            var minutes = (byte) (fullSeconds / 60 % 60);
-            var seconds = (byte) (fullSeconds % 60);
+            var hours = (byte) (full_seconds / 3600 > 23 ? full_seconds / 3600 % 24 : full_seconds / 3600);
+            var minutes = (byte) (full_seconds / 60 % 60);
+            var seconds = (byte) (full_seconds % 60);
             
             return new Time(hours, minutes, seconds);
         }
 
         public static Time Plus(Time time, TimePeriod timeperiod)
         {
-            var fullSeconds = ConvertTimeToSeconds(time) + timeperiod.Seconds;
+            var full_seconds = ConvertTimeToSeconds(time) + timeperiod.Seconds;
             
-            var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
-            var minutes = (byte) (fullSeconds / 60 % 60);
-            var seconds = (byte) (fullSeconds % 60);
+            var hours = (byte) (full_seconds / 3600 > 23 ? full_seconds / 3600 % 24 : full_seconds / 3600);
+            var minutes = (byte) (full_seconds / 60 % 60);
+            var seconds = (byte) (full_seconds % 60);
             
             return new Time(hours, minutes, seconds);
         }
 
-        private static long ConvertTimeToSeconds(Time time) => time.Hours * 3600 + time.Minutes * 60 + time.Seconds;
+        private static long ConvertTimeToSeconds(Time time) => time._hours * 3600 + time._minutes * 60 + time._seconds;
     }
 }
