@@ -31,6 +31,10 @@ namespace TimeAndTimePeriod
         public override string ToString() => $"{_hours:00}:{_minutes:00}:{_seconds:00}";
 
         public bool Equals(Time other) => _hours == other._hours && _minutes == other._minutes && _seconds == other._seconds;
+        
+        public override bool Equals(object obj) => obj is Time other && Equals(other);
+
+        public override int GetHashCode() => HashCode.Combine(_hours, _minutes, _seconds);
 
         public int CompareTo(Time other)
         {
@@ -47,26 +51,75 @@ namespace TimeAndTimePeriod
         public static bool operator >(Time a, Time b) => a.CompareTo(b) > 0;
         public static bool operator >=(Time a, Time b) => a.CompareTo(b) >= 0;
         public static Time operator +(Time a, TimePeriod b) => a.Plus(b);
+        public static Time operator -(Time a, TimePeriod b) => a.Minus(b);
+
+        private Time Minus(TimePeriod timeperiod)
+        {
+            var hour = (byte) (Hours - timeperiod.Seconds / 3600 >= 0
+                ? Hours - timeperiod.Seconds / 3600
+                : 24 + Hours - timeperiod.Seconds / 3600);
+            byte minutes, seconds;
+            
+            if (Minutes - timeperiod.Seconds / 60 % 60 >= 0) minutes = (byte) (Minutes - timeperiod.Seconds / 60 % 60);
+            else
+            {
+                minutes = (byte) (60 + Minutes - timeperiod.Seconds / 60 % 60);
+                hour--;
+            }
+
+            if (Seconds - timeperiod.Seconds % 60 >= 0) seconds = (byte) (Seconds - timeperiod.Seconds % 60);
+            else
+            {
+                seconds = (byte) (60 + Seconds - timeperiod.Seconds % 60);
+                minutes--;
+            }
+            
+            return new Time(hour, minutes, seconds);
+        }
+
+        public static Time Minus(Time t, TimePeriod timeperiod)
+        {
+            var hour = (byte) (t.Hours - timeperiod.Seconds / 3600 >= 0
+                ? t.Hours - timeperiod.Seconds / 3600
+                : 24 + t.Hours - timeperiod.Seconds / 3600);
+            byte minutes, seconds;
+            
+            if (t.Minutes - timeperiod.Seconds / 60 % 60 >= 0) minutes = (byte) (t.Minutes - timeperiod.Seconds / 60 % 60);
+            else
+            {
+                minutes = (byte) (60 + t.Minutes - timeperiod.Seconds / 60 % 60);
+                hour--;
+            }
+
+            if (t.Seconds - timeperiod.Seconds % 60 >= 0) seconds = (byte) (t.Seconds - timeperiod.Seconds % 60);
+            else
+            {
+                seconds = (byte) (60 + t.Seconds - timeperiod.Seconds % 60);
+                minutes--;
+            }
+            
+            return new Time(hour, minutes, seconds);
+        }
 
 
         public Time Plus(TimePeriod timeperiod)
         {
-            var full_seconds = _hours * 3600 + _minutes * 60 + _seconds + timeperiod.Seconds;
+            var fullSeconds = ConvertTimeToSeconds(this) + timeperiod.Seconds;
 
-            var hours = (byte) (full_seconds / 3600 > 23 ? full_seconds / 3600 % 24 : full_seconds / 3600);
-            var minutes = (byte) (full_seconds / 60 % 60);
-            var seconds = (byte) (full_seconds % 60);
+            var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
+            var minutes = (byte) (fullSeconds / 60 % 60);
+            var seconds = (byte) (fullSeconds % 60);
             
             return new Time(hours, minutes, seconds);
         }
 
         public static Time Plus(Time time, TimePeriod timeperiod)
         {
-            var full_seconds = ConvertTimeToSeconds(time) + timeperiod.Seconds;
+            var fullSeconds = ConvertTimeToSeconds(time) + timeperiod.Seconds;
             
-            var hours = (byte) (full_seconds / 3600 > 23 ? full_seconds / 3600 % 24 : full_seconds / 3600);
-            var minutes = (byte) (full_seconds / 60 % 60);
-            var seconds = (byte) (full_seconds % 60);
+            var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
+            var minutes = (byte) (fullSeconds / 60 % 60);
+            var seconds = (byte) (fullSeconds % 60);
             
             return new Time(hours, minutes, seconds);
         }

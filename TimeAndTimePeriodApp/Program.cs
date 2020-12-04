@@ -9,23 +9,20 @@ namespace TimeAndTimePeriodApp
     {
         static void Main(string[] args)
         {
-            var czas = new Time("13:20:00");
+            var czas = new Time("13:20:20");
             var czas2 = new Time(14,10);
             
-            var okresczasu = new TimePeriod(51254);
+            var okresczasu = new TimePeriod("14:30:30");
             var okresczasu1 = new TimePeriod(czas, czas2);
             
             Console.WriteLine(czas2.ToString());
             Console.WriteLine(czas.ToString());
             
-            Console.WriteLine(czas.Equals(czas2));
-            Console.WriteLine(okresczasu.ToString());
-            Console.WriteLine(okresczasu1.ToString());
             
-            Console.WriteLine(okresczasu.Plus(okresczasu1));
+            Console.WriteLine(czas-okresczasu);
+            Console.WriteLine(Minus(czas, okresczasu));
             
-            Console.WriteLine(Plus(czas, okresczasu));
-            Console.WriteLine(okresczasu == okresczasu1);
+            Console.WriteLine(czas+okresczasu);
         }
     }
 }

@@ -99,10 +99,108 @@ namespace TimeAndPeriodUnitTests
             
             Assert.AreEqual(true, timeOne == timeTwo);
         }
+        
+        [TestMethod, TestCategory("Equals")]
+        [DataRow((byte)13,(byte)21,(byte)52,(byte)12,(byte)21,(byte)52)]
+        [DataRow((byte)3,(byte)10,(byte)6,(byte)8,(byte)10,(byte)6)]
+        public void CheckIfTimesAreNotEqual(byte h1, byte m1, byte s1, byte h2, byte m2, byte s2)
+        {
+            var timeOne = new Time(h1,m1,s1);
+            var timeTwo = new Time(h2,m2,s2);
+            
+            Assert.AreEqual(true, timeOne != timeTwo);
+        }
+
+        [TestMethod, TestCategory("Equals")]
+        [DataRow(2143,2143)]
+        [DataRow(91,91)]
+        [DataRow(123,123)]
+        public void CheckIfTimePeriodsAreEqual(long t1, long t2)
+        {
+            var timePeriodOne = new TimePeriod(t1);
+            var timePeriodTwo = new TimePeriod(t2);
+            
+            Assert.AreEqual(true, timePeriodOne == timePeriodTwo);
+        }
+        
+        [TestMethod, TestCategory("Equals")]
+        [DataRow(2143,2143)]
+        [DataRow(91,91)]
+        [DataRow(123,123)]
+        public void CheckIfTimePeriodsAreNotEqual(long t1, long t2)
+        {
+            var timePeriodOne = new TimePeriod(t1);
+            var timePeriodTwo = new TimePeriod(t2);
+            
+            Assert.AreEqual(true, timePeriodOne == timePeriodTwo);
+        }
 
         #endregion
+
+        #region <---| Operators |--->
+
+        [TestMethod, TestCategory("Operators")]
+        [DataRow((byte)13,(byte)21,(byte)52,(byte)13,(byte)21,(byte)50)]
+        [DataRow((byte)3,(byte)10,(byte)6,(byte)1,(byte)15,(byte)26)]
+        public void CheckIfOneTimeIsGreaterThanAnother(byte h1, byte m1, byte s1, byte h2, byte m2, byte s2)
+        {
+            var timeOne = new Time(h1,m1,s1);
+            var timeTwo = new Time(h2,m2,s2);
+            
+            Assert.AreEqual(true, timeOne > timeTwo);
+        }
         
+        [TestMethod, TestCategory("Operators")]
+        [DataRow((byte)13,(byte)21,(byte)52,(byte)13,(byte)21,(byte)50)]
+        [DataRow((byte)3,(byte)10,(byte)6,(byte)1,(byte)15,(byte)26)]
+        [DataRow((byte)13,(byte)21,(byte)52,(byte)13,(byte)21,(byte)52)]
+        [DataRow((byte)23,(byte)10,(byte)6,(byte)1,(byte)15,(byte)26)]
+        public void CheckIfOneTimeIsGreaterOrEqualToAnother(byte h1, byte m1, byte s1, byte h2, byte m2, byte s2)
+        {
+            var timeOne = new Time(h1,m1,s1);
+            var timeTwo = new Time(h2,m2,s2);
+            
+            Assert.AreEqual(true, timeOne >= timeTwo);
+        }
         
+        [TestMethod, TestCategory("Operators")]
+        [DataRow((byte)11,(byte)21,(byte)52,(byte)13,(byte)21,(byte)50)]
+        [DataRow((byte)23,(byte)10,(byte)6,(byte)23,(byte)55,(byte)26)]
+        public void CheckIfOneTimeIsLesserThanAnother(byte h1, byte m1, byte s1, byte h2, byte m2, byte s2)
+        {
+            var timeOne = new Time(h1,m1,s1);
+            var timeTwo = new Time(h2,m2,s2);
+            
+            Assert.AreEqual(true, timeOne < timeTwo);
+        }
+        
+        [TestMethod, TestCategory("Operators")]
+        [DataRow((byte)11,(byte)21,(byte)52,(byte)13,(byte)21,(byte)50)]
+        [DataRow((byte)3,(byte)10,(byte)6,(byte)11,(byte)15,(byte)26)]
+        [DataRow((byte)13,(byte)21,(byte)52,(byte)13,(byte)21,(byte)52)]
+        [DataRow((byte)23,(byte)10,(byte)6,(byte)23,(byte)10,(byte)6)]
+        public void CheckIfOneTimeIsLesserOrEqualToAnother(byte h1, byte m1, byte s1, byte h2, byte m2, byte s2)
+        {
+            var timeOne = new Time(h1,m1,s1);
+            var timeTwo = new Time(h2,m2,s2);
+            
+            Assert.AreEqual(true, timeOne <= timeTwo);
+        }
+        
+        [TestMethod, TestCategory("Operators")]
+        [DataRow((byte)11,(byte)21,(byte)52,(ulong)10,(byte)21,(byte)50, (byte)21, (byte)42, (byte)42)]
+        [DataRow((byte)5,(byte)21,(byte)3,(ulong)10,(byte)21,(byte)50, (byte)15, (byte)42, (byte)53)]
+        [DataRow((byte)20,(byte)21,(byte)52,(ulong)6,(byte)21,(byte)50, (byte)2, (byte)42, (byte)42)]
+        public void AddingTimePeriodToTime(byte h1, byte m1, byte s1, ulong h2, byte m2, byte s2, byte expectedH, byte expectedM, byte expectedS)
+        {
+            var time = new Time(h1,m1,s1);
+            var timePeriod = new TimePeriod(h2,m2,s2);
+            var expectedTime = new Time(expectedH, expectedM, expectedS);
+            
+            Assert.AreEqual(expectedTime, time + timePeriod);
+        }
+
+        #endregion
 
     }
 }

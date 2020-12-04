@@ -5,7 +5,6 @@ namespace TimeAndTimePeriod
 {
     public struct TimePeriod : IEquatable<TimePeriod>, IComparable<TimePeriod>
     {
-        
         private readonly long _seconds;
         public long Seconds => _seconds;
 
@@ -46,6 +45,7 @@ namespace TimeAndTimePeriod
         public static bool operator >(TimePeriod a, TimePeriod b) => a.CompareTo(b) > 0;
         public static bool operator >=(TimePeriod a, TimePeriod b) => a.CompareTo(b) >= 0;
         public static TimePeriod operator +(TimePeriod a, TimePeriod b) => a.Plus(b);
+        public static TimePeriod operator -(TimePeriod a, TimePeriod b) => a.Minus(b);
 
         public override bool Equals(object obj) => obj is TimePeriod other && Equals(other);
 
@@ -53,7 +53,21 @@ namespace TimeAndTimePeriod
         public bool Equals(TimePeriod other) => _seconds == other._seconds;
         public int CompareTo(TimePeriod other) => (int) (_seconds - other._seconds);
 
-        public TimePeriod Plus(TimePeriod timeperiod) => new TimePeriod(_seconds + timeperiod._seconds);
+        private TimePeriod Minus(TimePeriod timeperiod)
+        {
+            var timePeriodDifference = _seconds - timeperiod._seconds;
+            
+            if(timePeriodDifference >= 0) return new TimePeriod(timePeriodDifference);
+            throw new ArgumentException();
+        } 
+        public static TimePeriod Minus(TimePeriod timeperiod1, TimePeriod timeperiod2)
+        {
+            var timePeriodDifference = timeperiod1._seconds - timeperiod2._seconds;
+            
+            if(timePeriodDifference >= 0) return new TimePeriod(timePeriodDifference);
+            throw new ArgumentException();
+        } 
+        private TimePeriod Plus(TimePeriod timeperiod) => new TimePeriod(_seconds + timeperiod._seconds);
         public static TimePeriod Plus(TimePeriod timeperiod1, TimePeriod timeperiod2) => new TimePeriod(timeperiod1._seconds + timeperiod2._seconds);
         private static long ConvertTimeToSeconds(Time time) => time.Hours * 3600 + time.Minutes * 60 + time.Seconds;
     }
