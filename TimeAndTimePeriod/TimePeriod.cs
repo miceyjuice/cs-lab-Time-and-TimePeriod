@@ -69,6 +69,6 @@ namespace TimeAndTimePeriod
         } 
         private TimePeriod Plus(TimePeriod timeperiod) => new TimePeriod(_seconds + timeperiod._seconds);
         public static TimePeriod Plus(TimePeriod timeperiod1, TimePeriod timeperiod2) => new TimePeriod(timeperiod1._seconds + timeperiod2._seconds);
-        private static long ConvertTimeToSeconds(Time time) => time.Hours * 3600 + time.Minutes * 60 + time.Seconds;
+        public static long ConvertTimeToSeconds(Time time) => time.Hours * 3600 + time.Minutes * 60 + time.Seconds;
     }
 }
