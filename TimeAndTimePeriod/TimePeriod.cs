@@ -6,7 +6,12 @@ namespace TimeAndTimePeriod
     public struct TimePeriod : IEquatable<TimePeriod>, IComparable<TimePeriod>
     {
         private readonly long _seconds;
-        public long Seconds => _seconds;
+
+        public long FullSeconds => _seconds;
+
+        public long Hours => _seconds / 3600;
+        public byte Minutes => (byte) (_seconds / 60 % 60);
+        public byte Seconds => (byte) (_seconds % 60);
 
         public TimePeriod(ulong hours, byte minutes, byte seconds = 0)
         {
@@ -16,12 +21,15 @@ namespace TimeAndTimePeriod
 
         public TimePeriod(long seconds)
         {
-            this._seconds = seconds;
+            this._seconds = seconds < 0 ? throw new ArgumentException() : seconds ;
         }
 
         public TimePeriod(string timeperiod)
         {
             var time = timeperiod.Split(':');
+            
+            if(time.Length != 3) throw new Exception("Podano zły format czasu! Poprawny format to: { hh:mm:ss }");
+
             var hour = Convert.ToInt64(time[0]) >= 0 ? Convert.ToInt64(time[0]) : throw new ArgumentException();
             var minute = Convert.ToInt64(time[1]) < 60 ? Convert.ToInt64(time[1]) : throw new ArgumentException();
             var second = Convert.ToInt64(time[2]) < 60 ? Convert.ToInt64(time[2]) : throw new ArgumentException();
@@ -36,7 +44,7 @@ namespace TimeAndTimePeriod
             _seconds = secondTime - firstTime < 0 ? (secondTime - firstTime) + 24 * 3600 : secondTime - firstTime;
         }
 
-        public override string ToString() => $"{Seconds / 3600}:{(Seconds / 60) % 60:00}:{Seconds % 60:00}";
+        public override string ToString() => $"{Hours}:{Minutes:00}:{Seconds:00}";
 
         public static bool operator ==(TimePeriod a, TimePeriod b) => a.Equals(b);
         public static bool operator !=(TimePeriod a, TimePeriod b) => !(a == b);
