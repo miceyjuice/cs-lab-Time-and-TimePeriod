@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TimeAndTimePeriod;
 
@@ -18,9 +19,9 @@ namespace TimeAndPeriodUnitTests
 
         private void AssertTimePeriod(TimePeriod tp, ulong expectedH, byte expectedM, byte expectedS)
         {
-            Assert.AreEqual(expectedH, (ulong) (tp.Seconds / 3600));
-            Assert.AreEqual(expectedM,(byte) (tp.Seconds / 60 % 60));
-            Assert.AreEqual(expectedS, (byte) (tp.Seconds % 60));
+            Assert.AreEqual(expectedH, (ulong) (tp.Hours));
+            Assert.AreEqual(expectedM,(byte) (tp.Minutes));
+            Assert.AreEqual(expectedS, (byte) (tp.Seconds));
         }
 
         #region <---| Constructors |--->
@@ -31,6 +32,16 @@ namespace TimeAndPeriodUnitTests
             var time = new Time();
             
             AssertTime(time, defaultValue, defaultValue, defaultValue);
+        }
+
+        [TestMethod, TestCategory("Constructors")]
+        [DataRow((byte)33,(byte)60,(byte)60)]
+        [DataRow((byte)25,(byte)99,(byte)62)]
+        [DataRow((byte)71,(byte)79,(byte)102)]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TimeConstructorThreeParametersArgumentException(byte h, byte m, byte s)
+        {
+            var time = new Time(h,m,s);
         }
         
         [TestMethod, TestCategory("Constructors")]
@@ -63,7 +74,7 @@ namespace TimeAndPeriodUnitTests
         {
             var time = new Time(h);
 
-            AssertTime(time,expectedH,0,0);
+            AssertTime(time,expectedH,defaultValue,defaultValue);
         }
         
         [TestMethod, TestCategory("Constructors")]
@@ -83,6 +94,17 @@ namespace TimeAndPeriodUnitTests
             var timePeriod = new TimePeriod();
             
             Assert.AreEqual(defaultValue, timePeriod.Seconds);
+        }
+        
+        [TestMethod, TestCategory("Constructors")]
+        [DataRow((ulong)13,(byte)66,(byte)79)]
+        [DataRow((ulong)13,(byte)76,(byte)79)]
+        [DataRow((ulong)0,(byte)67,(byte)79)]
+        [DataRow((ulong)15251255121541241241,(byte)99,(byte)102)]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TimePeriodConstructorThreeParametersArgumentException(ulong h, byte m, byte s)
+        {
+            var timePeriod = new TimePeriod(h, m, s);
         }
 
         [TestMethod, TestCategory("Constructors")]
@@ -121,6 +143,19 @@ namespace TimeAndPeriodUnitTests
             var stringTime = new TimePeriod(t);
             
             AssertTimePeriod(stringTime,h,m,s);
+        }
+
+        [TestMethod, TestCategory("Constructors")]
+        [DataRow((byte)13,(byte)10,(byte)10,(byte)5,(byte)50,(byte)10,(ulong)16,(byte)40,(byte)0)]
+        [DataRow((byte)7,(byte)15,(byte)2,(byte)15,(byte)50,(byte)20,(ulong)8,(byte)35,(byte)18)]
+        [DataRow((byte)9,(byte)40,(byte)11,(byte)23,(byte)55,(byte)15,(ulong)14,(byte)15,(byte)4)]
+        public void TimePeriodConstructorWithTwoTimes(byte h1, byte m1, byte s1, byte h2, byte m2, byte s2, ulong expectedH, byte expectedM, byte expectedS)
+        {
+            var timeOne = new Time(h1, m1, s1);
+            var timeTwo = new Time(h2, m2, s2);
+            var timePeriod = new TimePeriod(timeOne, timeTwo);
+            
+            AssertTimePeriod(timePeriod, expectedH, expectedM, expectedS);
         }
 
         #endregion
@@ -273,7 +308,7 @@ namespace TimeAndPeriodUnitTests
             Assert.AreEqual(expectedTime, time - timePeriod);
         }
 
-        [TestMethod, TestCategory(("Operators"))]
+        [TestMethod, TestCategory("Operators")]
         [DataRow(1555,931)]
         [DataRow(551522,51232)]
         [DataRow(234324,1223)]
@@ -285,7 +320,7 @@ namespace TimeAndPeriodUnitTests
             Assert.AreEqual(true, timPeriodOne > timPeriodTwo);
         }
         
-        [TestMethod, TestCategory(("Operators"))]
+        [TestMethod, TestCategory("Operators")]
         [DataRow(1555,931)]
         [DataRow(551522,51232)]
         [DataRow(234324,234324)]
@@ -297,7 +332,7 @@ namespace TimeAndPeriodUnitTests
             Assert.AreEqual(true, timPeriodOne >= timPeriodTwo);
         }
         
-        [TestMethod, TestCategory(("Operators"))]
+        [TestMethod, TestCategory("Operators")]
         [DataRow(1555,9331)]
         [DataRow(551522,565232)]
         [DataRow(234324,1232663)]
@@ -309,7 +344,7 @@ namespace TimeAndPeriodUnitTests
             Assert.AreEqual(true, timPeriodOne < timPeriodTwo);
         }
         
-        [TestMethod, TestCategory(("Operators"))]
+        [TestMethod, TestCategory("Operators")]
         [DataRow(1555,9331)]
         [DataRow(551522,551522)]
         [DataRow(234324,1232663)]
