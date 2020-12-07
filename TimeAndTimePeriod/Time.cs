@@ -8,8 +8,17 @@ namespace TimeAndTimePeriod
         private readonly byte _minutes;
         private readonly byte _seconds;
 
+        /// <summary>
+        /// Czas wyrażany w godzinach
+        /// </summary>
         public byte Hours => _hours;
+        /// <summary>
+        /// Czas wyrażany w minutach
+        /// </summary>
         public byte Minutes => _minutes;
+        /// <summary>
+        /// Czas wyrażany w sekundach
+        /// </summary>
         public byte Seconds => _seconds;
 
         public Time(byte hours, byte minutes = 0, byte seconds = 0)
@@ -22,10 +31,12 @@ namespace TimeAndTimePeriod
         public Time(string time)
         {
             var times = time.Split(':');
+            
+            if(times.Length != 3) throw new Exception("Podano zły format czasu! Poprawny format to: { hh:mm:ss }");
 
-            _hours = Convert.ToByte(times[0]);
-            _minutes = Convert.ToByte(times[1]);
-            _seconds = Convert.ToByte(times[2]);
+            _hours = Convert.ToByte(times[0]) < 24 ? Convert.ToByte(times[0]) : throw new ArgumentOutOfRangeException("Godziny muszą mieścić się w przedziale: 0 - 23");
+            _minutes = Convert.ToByte(times[1]) < 60 ? Convert.ToByte(times[0]) : throw new ArgumentOutOfRangeException("Minuty muszą mieścić się w przedziale: 0 - 59");
+            _seconds = Convert.ToByte(times[2]) < 60 ? Convert.ToByte(times[0]) : throw new ArgumentOutOfRangeException("Sekundy muszą mieścić się w przedziale: 0 - 59");
         }
 
         public override string ToString() => $"{_hours:00}:{_minutes:00}:{_seconds:00}";
@@ -55,22 +66,22 @@ namespace TimeAndTimePeriod
 
         private Time Minus(TimePeriod timeperiod)
         {
-            var hour = (byte) (Hours - timeperiod.Seconds / 3600 >= 0
-                ? Hours - timeperiod.Seconds / 3600
-                : 24 + Hours - timeperiod.Seconds / 3600);
+            var hour = (byte) (Hours - timeperiod.Hours >= 0
+                ? Hours - timeperiod.Hours
+                : 24 + Hours - timeperiod.Hours);
             byte minutes, seconds;
             
-            if (Minutes - timeperiod.Seconds / 60 % 60 >= 0) minutes = (byte) (Minutes - timeperiod.Seconds / 60 % 60);
+            if (Minutes - timeperiod.Minutes >= 0) minutes = (byte) (Minutes - timeperiod.Minutes);
             else
             {
-                minutes = (byte) (60 + Minutes - timeperiod.Seconds / 60 % 60);
+                minutes = (byte) (60 + Minutes - timeperiod.Minutes);
                 hour--;
             }
 
-            if (Seconds - timeperiod.Seconds % 60 >= 0) seconds = (byte) (Seconds - timeperiod.Seconds % 60);
+            if (Seconds - timeperiod.Seconds >= 0) seconds = (byte) (Seconds - timeperiod.Seconds);
             else
             {
-                seconds = (byte) (60 + Seconds - timeperiod.Seconds % 60);
+                seconds = (byte) (60 + Seconds - timeperiod.Seconds);
                 minutes--;
             }
             
@@ -79,22 +90,22 @@ namespace TimeAndTimePeriod
 
         public static Time Minus(Time t, TimePeriod timeperiod)
         {
-            var hour = (byte) (t.Hours - timeperiod.Seconds / 3600 >= 0
-                ? t.Hours - timeperiod.Seconds / 3600
-                : 24 + t.Hours - timeperiod.Seconds / 3600);
+            var hour = (byte) (t.Hours - timeperiod.Hours >= 0
+                ? t.Hours - timeperiod.Hours
+                : 24 + t.Hours - timeperiod.Hours);
             byte minutes, seconds;
             
-            if (t.Minutes - timeperiod.Seconds / 60 % 60 >= 0) minutes = (byte) (t.Minutes - timeperiod.Seconds / 60 % 60);
+            if (t.Minutes - timeperiod.Minutes >= 0) minutes = (byte) (t.Minutes - timeperiod.Minutes);
             else
             {
-                minutes = (byte) (60 + t.Minutes - timeperiod.Seconds / 60 % 60);
+                minutes = (byte) (60 + t.Minutes - timeperiod.Minutes);
                 hour--;
             }
 
-            if (t.Seconds - timeperiod.Seconds % 60 >= 0) seconds = (byte) (t.Seconds - timeperiod.Seconds % 60);
+            if (t.Seconds - timeperiod.Seconds >= 0) seconds = (byte) (t.Seconds - timeperiod.Seconds);
             else
             {
-                seconds = (byte) (60 + t.Seconds - timeperiod.Seconds % 60);
+                seconds = (byte) (60 + t.Seconds - timeperiod.Seconds);
                 minutes--;
             }
             
@@ -104,7 +115,7 @@ namespace TimeAndTimePeriod
 
         public Time Plus(TimePeriod timeperiod)
         {
-            var fullSeconds = ConvertTimeToSeconds(this) + timeperiod.Seconds;
+            var fullSeconds = ConvertTimeToSeconds(this) + timeperiod.FullSeconds;
 
             var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
             var minutes = (byte) (fullSeconds / 60 % 60);
@@ -115,7 +126,7 @@ namespace TimeAndTimePeriod
 
         public static Time Plus(Time time, TimePeriod timeperiod)
         {
-            var fullSeconds = ConvertTimeToSeconds(time) + timeperiod.Seconds;
+            var fullSeconds = ConvertTimeToSeconds(time) + timeperiod.Hours + timeperiod.Minutes + timeperiod.Seconds;
             
             var hours = (byte) (fullSeconds / 3600 > 23 ? fullSeconds / 3600 % 24 : fullSeconds / 3600);
             var minutes = (byte) (fullSeconds / 60 % 60);
